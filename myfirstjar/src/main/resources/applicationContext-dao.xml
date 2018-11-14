@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+    <mybatis:scan base-package="com.qf.dao"/>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath:com/qf/dao/mapper/*.xml"/>
+        <property name="typeAliasesPackage" value="com.qf.entity"/>
+        <property name="plugins">
+            <array>
+                <bean class="com.qf.ssm.interceptor.PagePlugin"/>
+
+            </array>
+        </property>
+    </bean>
+</beans>

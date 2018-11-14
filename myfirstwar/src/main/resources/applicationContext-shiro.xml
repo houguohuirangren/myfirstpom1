@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:component-scan base-package="com.qf.realm"/>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="sessionMode" value="native"/>
+       <!-- <property name="realm">
+            &lt;!&ndash;<bean class="com.qf.shiro.realm.MyRealm"/>&ndash;&gt;
+        </property>-->
+        <property name="realm" ref="myRealm"/>
+    </bean>
+
+
+
+
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    <bean id="secureRemoteInvocationExecutor" class="org.apache.shiro.spring.remoting.SecureRemoteInvocationExecutor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+
+    <!-- shiro的核心过滤器 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <!-- 告诉shiro如何去到登录页面 -->
+        <property name="loginUrl" value="/getToPage/login"/>
+
+        <!-- url过滤规则
+            anon:游客可以通过
+            authc:认证才能通过
+        -->
+        <property name="filterChainDefinitions">
+            <value>
+                /emp/login=anon
+                /emp/register=anon
+                /getToPage/register=anon
+                /resources/**=anon
+                /logout=logout
+                /**=authc
+            </value>
+        </property>
+    </bean>
+
+</beans>
